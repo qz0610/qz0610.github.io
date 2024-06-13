@@ -1,53 +1,38 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-let screenWidth = window.innerWidth;
-let screenHeight = window.innerHeight;
+const screenWidth = canvas.width;
+const screenHeight = canvas.height;
 
-function resizeCanvas() {
-    screenWidth = window.innerWidth;
-    screenHeight = window.innerHeight;
-    canvas.width = screenWidth;
-    canvas.height = screenHeight;
-    resetGame();
-}
-
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
+const paddleWidth = 100;
 const paddleHeight = 10;
 const paddleSpeed = 7;
-let paddleWidth = screenWidth * 0.1; // Paddle width relative to screen width
 let paddleX = (screenWidth - paddleWidth) / 2;
 
-const ballRadius = screenHeight * 0.02; // Ball radius relative to screen height
+const ballRadius = 10;
 let ballX = screenWidth / 2;
 let ballY = screenHeight / 2;
 let ballSpeedX = 5 * (Math.random() < 0.5 ? 1 : -1);
 let ballSpeedY = -5;
 
 const brickRowCount = 5;
-let brickColumnCount = Math.floor(screenWidth / (ballRadius * 4)); // Adjust number of columns based on screen width
-let brickWidth = screenWidth / brickColumnCount;
-const brickHeight = screenHeight * 0.05; // Brick height relative to screen height
+const brickColumnCount = 10;
+const brickWidth = screenWidth / brickColumnCount;
+const brickHeight = 30;
 let bricks = [];
 
 function resetGame() {
-    paddleWidth = screenWidth * 0.1;
     paddleX = (screenWidth - paddleWidth) / 2;
-
     ballX = screenWidth / 2;
     ballY = screenHeight / 2;
     ballSpeedX = 5 * (Math.random() < 0.5 ? 1 : -1);
     ballSpeedY = -5;
 
-    brickColumnCount = Math.floor(screenWidth / (ballRadius * 4));
-    brickWidth = screenWidth / brickColumnCount;
-
     bricks = [];
     for (let row = 0; row < brickRowCount; row++) {
+        bricks[row] = [];
         for (let col = 0; col < brickColumnCount; col++) {
-            bricks.push({ x: col * brickWidth, y: row * brickHeight, status: 1 });
+            bricks[row][col] = { x: col * brickWidth, y: row * brickHeight, status: 1 };
         }
     }
 }
@@ -68,9 +53,9 @@ function drawBall() {
 function drawBricks() {
     for (let row = 0; row < brickRowCount; row++) {
         for (let col = 0; col < brickColumnCount; col++) {
-            if (bricks[row * brickColumnCount + col].status === 1) {
-                let brickX = bricks[row * brickColumnCount + col].x;
-                let brickY = bricks[row * brickColumnCount + col].y;
+            if (bricks[row][col].status === 1) {
+                let brickX = bricks[row][col].x;
+                let brickY = bricks[row][col].y;
                 ctx.fillStyle = "blue";
                 ctx.fillRect(brickX, brickY, brickWidth, brickHeight);
             }
@@ -116,7 +101,7 @@ function update() {
     // Ball collision with bricks
     for (let row = 0; row < brickRowCount; row++) {
         for (let col = 0; col < brickColumnCount; col++) {
-            let brick = bricks[row * brickColumnCount + col];
+            let brick = bricks[row][col];
             if (brick.status === 1) {
                 if (ballX > brick.x && ballX < brick.x + brickWidth &&
                     ballY > brick.y && ballY < brick.y + brickHeight) {

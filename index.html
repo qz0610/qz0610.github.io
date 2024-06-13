@@ -3,123 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breakout Game with Brython</title>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.9.5/brython.min.js"></script>
+    <title>Breakout Game</title>
     <style>
         canvas {
             background-color: black;
+            display: block;
+            margin: 0 auto;
         }
     </style>
 </head>
-<body onload="brython()">
+<body>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <script type="text/python">
-        from browser import document, html, window
-        import math, random
-
-        canvas = document["gameCanvas"]
-        context = canvas.getContext("2d")
-
-        screen_width = 800
-        screen_height = 600
-
-        paddle_width = 100
-        paddle_height = 10
-        paddle_speed = 7
-        paddle_x = (screen_width - paddle_width) / 2
-
-        ball_radius = 10
-        ball_x = screen_width / 2
-        ball_y = screen_height / 2
-        ball_speed_x = 5 * random.choice([1, -1])
-        ball_speed_y = -5
-
-        brick_rows = 5
-        brick_cols = 10
-        brick_width = screen_width / brick_cols
-        brick_height = 30
-        bricks = []
-
-        for row in range(brick_rows):
-            for col in range(brick_cols):
-                bricks.append([col * brick_width, row * brick_height])
-
-        def draw_paddle():
-            context.fillStyle = "white"
-            context.fillRect(paddle_x, screen_height - paddle_height - 10, paddle_width, paddle_height)
-
-        def draw_ball():
-            context.beginPath()
-            context.arc(ball_x, ball_y, ball_radius, 0, math.pi*2)
-            context.fillStyle = "red"
-            context.fill()
-            context.closePath()
-
-        def draw_bricks():
-            for brick in bricks:
-                context.fillStyle = "blue"
-                context.fillRect(brick[0], brick[1], brick_width, brick_height)
-
-        def reset_game():
-            global paddle_x, ball_x, ball_y, ball_speed_x, ball_speed_y, bricks
-            paddle_x = (screen_width - paddle_width) / 2
-            ball_x = screen_width / 2
-            ball_y = screen_height / 2
-            ball_speed_x = 5 * random.choice([1, -1])
-            ball_speed_y = -5
-            bricks = []
-            for row in range(brick_rows):
-                for col in range(brick_cols):
-                    bricks.append([col * brick_width, row * brick_height])
-
-        def update(dt):
-            global paddle_x, ball_x, ball_y, ball_speed_x, ball_speed_y
-
-            # Move the paddle
-            if window.key == "ArrowLeft" and paddle_x > 0:
-                paddle_x -= paddle_speed
-            if window.key == "ArrowRight" and paddle_x < screen_width - paddle_width:
-                paddle_x += paddle_speed
-
-            # Move the ball
-            ball_x += ball_speed_x
-            ball_y += ball_speed_y
-
-            # Ball collision with walls
-            if ball_x - ball_radius <= 0 or ball_x + ball_radius >= screen_width:
-                ball_speed_x *= -1
-            if ball_y - ball_radius <= 0:
-                ball_speed_y *= -1
-            if ball_y + ball_radius >= screen_height:
-                reset_game()
-
-            # Ball collision with paddle
-            if (ball_y + ball_radius >= screen_height - paddle_height - 10 and
-                paddle_x <= ball_x <= paddle_x + paddle_width):
-                ball_speed_y *= -1
-
-            # Ball collision with bricks
-            for brick in bricks[:]:
-                if (brick[0] <= ball_x <= brick[0] + brick_width and
-                    brick[1] <= ball_y <= brick[1] + brick_height):
-                    bricks.remove(brick)
-                    ball_speed_y *= -1
-                    break
-
-            # Clear the canvas
-            context.clearRect(0, 0, screen_width, screen_height)
-
-            # Draw everything
-            draw_paddle()
-            draw_ball()
-            draw_bricks()
-
-        def game_loop():
-            window.requestAnimationFrame(game_loop)
-            update(1/60)
-
-        reset_game()
-        game_loop()
-    </script>
+    <script src="game.js"></script>
 </body>
 </html>

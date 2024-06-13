@@ -1,40 +1,48 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+let screenWidth = window.innerWidth;
+let screenHeight = window.innerHeight;
+
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    screenWidth = window.innerWidth;
+    screenHeight = window.innerHeight;
+    canvas.width = screenWidth;
+    canvas.height = screenHeight;
+    resetGame();
 }
 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-const screenWidth = canvas.width;
-const screenHeight = canvas.height;
-
-const paddleWidth = 100;
 const paddleHeight = 10;
 const paddleSpeed = 7;
+let paddleWidth = screenWidth * 0.1; // Paddle width relative to screen width
 let paddleX = (screenWidth - paddleWidth) / 2;
 
-const ballRadius = 10;
+const ballRadius = screenHeight * 0.02; // Ball radius relative to screen height
 let ballX = screenWidth / 2;
 let ballY = screenHeight / 2;
 let ballSpeedX = 5 * (Math.random() < 0.5 ? 1 : -1);
 let ballSpeedY = -5;
 
 const brickRowCount = 5;
-const brickColumnCount = Math.floor(screenWidth / (ballRadius * 4)); // Adjust number of columns based on screen width
-const brickWidth = screenWidth / brickColumnCount;
-const brickHeight = 30;
+let brickColumnCount = Math.floor(screenWidth / (ballRadius * 4)); // Adjust number of columns based on screen width
+let brickWidth = screenWidth / brickColumnCount;
+const brickHeight = screenHeight * 0.05; // Brick height relative to screen height
 let bricks = [];
 
 function resetGame() {
+    paddleWidth = screenWidth * 0.1;
     paddleX = (screenWidth - paddleWidth) / 2;
+
     ballX = screenWidth / 2;
     ballY = screenHeight / 2;
     ballSpeedX = 5 * (Math.random() < 0.5 ? 1 : -1);
     ballSpeedY = -5;
+
+    brickColumnCount = Math.floor(screenWidth / (ballRadius * 4));
+    brickWidth = screenWidth / brickColumnCount;
 
     bricks = [];
     for (let row = 0; row < brickRowCount; row++) {

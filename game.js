@@ -1,6 +1,14 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
 const screenWidth = canvas.width;
 const screenHeight = canvas.height;
 
@@ -16,7 +24,7 @@ let ballSpeedX = 5 * (Math.random() < 0.5 ? 1 : -1);
 let ballSpeedY = -5;
 
 const brickRowCount = 5;
-const brickColumnCount = 10;
+const brickColumnCount = Math.floor(screenWidth / (ballRadius * 4)); // Adjust number of columns based on screen width
 const brickWidth = screenWidth / brickColumnCount;
 const brickHeight = 30;
 let bricks = [];
@@ -30,9 +38,8 @@ function resetGame() {
 
     bricks = [];
     for (let row = 0; row < brickRowCount; row++) {
-        bricks[row] = [];
         for (let col = 0; col < brickColumnCount; col++) {
-            bricks[row][col] = { x: col * brickWidth, y: row * brickHeight, status: 1 };
+            bricks.push({ x: col * brickWidth, y: row * brickHeight, status: 1 });
         }
     }
 }
@@ -53,9 +60,9 @@ function drawBall() {
 function drawBricks() {
     for (let row = 0; row < brickRowCount; row++) {
         for (let col = 0; col < brickColumnCount; col++) {
-            if (bricks[row][col].status === 1) {
-                let brickX = bricks[row][col].x;
-                let brickY = bricks[row][col].y;
+            if (bricks[row * brickColumnCount + col].status === 1) {
+                let brickX = bricks[row * brickColumnCount + col].x;
+                let brickY = bricks[row * brickColumnCount + col].y;
                 ctx.fillStyle = "blue";
                 ctx.fillRect(brickX, brickY, brickWidth, brickHeight);
             }
@@ -101,7 +108,7 @@ function update() {
     // Ball collision with bricks
     for (let row = 0; row < brickRowCount; row++) {
         for (let col = 0; col < brickColumnCount; col++) {
-            let brick = bricks[row][col];
+            let brick = bricks[row * brickColumnCount + col];
             if (brick.status === 1) {
                 if (ballX > brick.x && ballX < brick.x + brickWidth &&
                     ballY > brick.y && ballY < brick.y + brickHeight) {
